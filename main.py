@@ -10,7 +10,6 @@ import datetime
 import time
 import requests
 import json
-import os
 import re
 import winsound
 import webbrowser
@@ -28,6 +27,8 @@ tolerancy_radius = 10 # km
 
 centerList_url = 'https://www.doctolib.fr/vaccination-covid-19/' + city + '?ref_visit_motive_ids[]=6970&ref_visit_motive_ids[]=7005&force_max_limit=2'
 searchResults_url = 'https://www.doctolib.fr/search_results/[id].json?ref_visit_motive_ids%5B%5D=6970&ref_visit_motive_ids%5B%5D=7005&speciality_id=5494&search_result_format=json&force_max_limit=2'
+
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}
 
 # Calculate the distance between 2 GPS points
 def distance(geoloc, point):
@@ -68,7 +69,7 @@ while True:
     # Request doctolib for the vaccination center corresponding at index in the close list
     searchRequest_url = searchResults_url.replace('[id]', closePlaces_infos[index][2])
     print('fetching', searchRequest_url)
-    response = requests.get(searchRequest_url).text
+    response = requests.get(searchRequest_url, headers=headers).text
     
     # Read json
     data = None
@@ -101,7 +102,7 @@ while True:
    
     # Increase index
     index += 1
-    if index == len(closePlaces_infos[index][2]):
+    if index == len(closePlaces_infos):
         index = 0
    
     #Wait 2s
